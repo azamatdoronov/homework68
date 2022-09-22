@@ -33,12 +33,12 @@
                 Лайков: {{ article.user.all|length }} </p>
             {% if request.user in article.user.all %}
                 <button id="like{{ forloop.counter }}" class="btn_like" data-pk="{{ article.id }}"
-                        style="width: 100px; height: 75px; ">dislike
+                        style="width: 60px; height: 25px; background-color: deepskyblue; border: none; border-radius: 12px">dislike
                 </button>
             {% endif %}
             {% if request.user not in article.user.all %}
                 <button id="like{{ forloop.counter }}" class="btn_like" data-pk="{{ article.id }}"
-                        style="width: 100px; height: 75px; ">like
+                        style="width: 60px; height: 25px; background-color: deepskyblue; border: none; border-radius: 12px">like
                 </button>
             {% endif %}
 
