@@ -1,0 +1,69 @@
+<h1 class="text-center">Статьи</h1>
+<div class="row">
+    {% for article in articles %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title" id="article_pk" data-pk="{{ article.id }}">{{ article.title }}</h5>
+                </div>
+                <a href="{{ article.get_absolute_url }}" class="card-link btn btn-primary">Подробнее</a>
+                <br>
+                <div id="container" style="display: flex;">
+                    <p style="margin-right: auto" id="likes_p-{{ article.id }}" data-pk="{{ article.id }}">
+                        Лайков: {{ article.user.all|length }} </p>
+                    {% if request.user in article.user.all %}
+                        <button id="like{{ forloop.counter }}" class="btn_like"
+                                data-pk="{% url 'webapp:CreateLike' article.pk %}"
+                                style="width: 60px; height: 25px; background-color: deepskyblue; border: none; border-radius: 12px;">
+                            dislike
+                        </button>
+                    {% endif %}
+                    {% if request.user not in article.user.all %}
+                        <button id="like{{ forloop.counter }}" class="btn_like"
+                                data-pk="{% url 'webapp:CreateLike' article.pk %}"
+                                style="width: 60px; height: 25px; background-color: deepskyblue; border: none; border-radius: 12px">
+                            like
+                        </button>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    {% empty %}
+    {% endfor %}
+    {% if is_paginated %}
+        <div class="text-center">{% include "partial/pagination.html" %}</div>
+    {% endif %}
+
+</div>
+
+<script>
+
+    async function changeButton(id, event) {
+        console.log('target: ', event.target);
+        let url = await event.target.dataset['pk'];
+        console.log(url)
+
+        let response = await fetch(url)
+        let data = await response.json()
+        console.log(data)
+        let likes = data['likes']
+        console.log(likes)
+        let likes_p = document.getElementById(`likes_p-${data.pk}`)
+        likes_p.innerText = 'Лайков: ' + likes
+        let button = await document.getElementById(id)
+
+        if (button.innerText === 'like') {
+            button.innerText = 'dislike'
+        } else if (button.innerText === 'dislike') {
+            button.innerText = 'like'
+        }
+
+    }
+
+    let button = document.getElementsByClassName('btn_like')
+    for (let i = 0; i < button.length; i++) {
+        button[i].addEventListener('click', () => changeButton(`like${(i + 1)}`, event))
+    }
+
+</script>
